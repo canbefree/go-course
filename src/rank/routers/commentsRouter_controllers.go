@@ -115,4 +115,13 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["rank/controllers:UserController"] = append(beego.GlobalControllerRouter["rank/controllers:UserController"],
+        beego.ControllerComments{
+            Method: "Hello",
+            Router: `/logout`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
 }
