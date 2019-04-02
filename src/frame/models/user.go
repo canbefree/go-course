@@ -19,7 +19,3 @@ func (u User) Name() string {
 	return u.Username
 }
 
-func init() {
-	u := User{"小米", "", ""}
-	u.Name()
-}

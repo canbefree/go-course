@@ -1,21 +1,19 @@
 package main
 
-import (
-	"fmt"
-	"frame/models"
+import "flag"
+
+// go -N 12 -C 23 url
+
+var (
+	count       string
+	concurrence string
+	src 		string
 )
 
 func main() {
-	u := models.User{"12", "小明", "我的"}
-	fmt.Printf(u.Name())
-	fmt.Printf("end")
+	flag.StringVar(&count, "N", "1", "")
+	flag.StringVar(&concurrence, "C", "123", "")
+	flag.StringVar(&src, "S", "123", "")
+	flag.Parse()
 
-	ulist := make(map[string][]models.User)
-
-	var ms = []models.User{u, u, u}
-
-	ulist["hah"] = ms
-
-	fmt.Println(ulist)
 }
-
