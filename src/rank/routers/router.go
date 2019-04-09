@@ -25,7 +25,6 @@ func init() {
 				&controllers.UserController{},
 			),
 		),
-		beego.NSGet("/")
 	)
 	beego.AddNamespace(ns)
 }
