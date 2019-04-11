@@ -16,15 +16,27 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-	http.HandleFunc("/ws", Ws)
+	http.HandleFunc("/ws", ws)
+	http.HandleFunc("/boardcast",boardCast)
+	http.HandleFunc("/sendMsg",sendMsg)
 	http.ListenAndServe("localhost:8888", nil)
 }
 
-func Ws(w http.ResponseWriter, r *http.Request) {
+func ws(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	defer conn.Close()
 	if err == nil {
 		logrus.Info("协议升级：")
 		go services.HandleRequest(conn)
 	}
+}
+
+//全员推送广播
+func boardCast(){
+	
+}
+
+//单独给某人推送消息
+func sendMsg(){
+
 }

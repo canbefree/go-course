@@ -1,7 +1,23 @@
 package main
 
-import "log"
+import "time"
 
 func main() {
-	log.Println("hello?")
+
+	test := make(chan int)
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			test <- 123
+		}
+	}()
+
+	for {
+		select {
+		case ch := <-test:
+			println(ch)
+		default:
+			println("timeout")
+		}
+	}
 }

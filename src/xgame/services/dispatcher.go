@@ -1,7 +1,12 @@
 package services
 
 import (
+	"xgame/models/cmd"
+
+	"github.com/sirupsen/logrus"
+
 	"github.com/gorilla/websocket"
+	"github.com/tidwall/gjson"
 )
 
 // type Dispatcher struct {
@@ -35,5 +40,15 @@ func HandleRequest(conn *websocket.Conn) {
 }
 
 func DecodeMsg(msg []byte) {
-	msgType,err := strconv.Atoi(gjson.Get(string(msg),"cmd")	.string
+	cmd_type := gjson.Get(string(msg), "cmd").String()
+	switch cmd_type {
+	case cmd.CMD_LOGIN:
+		logrus.Info("玩家登陆操作:")
+		Login.hande
+		break
+	case cmd.CMD_GUESS:
+		break
+	default:
+		break
+	}
 }
