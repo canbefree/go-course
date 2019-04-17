@@ -1,25 +1,33 @@
 package main
 
+/*
+keyword
+Pubsub 调度中心
+User 客户端
+Room	房间号
+
+
+*/
 import (
 	"log"
 	"time"
 )
 
 //订阅
-type Subscription interface {
+type Pubsub interface {
 	GetCollect() chan string
 	Register(Observer) //注册
-	BoardCast(string)
+	Publish(string)    //发布消息
 }
 
 //观察者接口
 type Observer interface {
 	GetId() int8
-	GetPipe() chan string   //读消息通道
-	Subscripe(Subscription) //订阅消息
-	Listen()                //监听消息
-	setWrite(chan string)   //设置订阅的写入
-	BoardCast(string)       //广播消息
+	GetPipe() chan string //读消息通道
+	Subscripe(Pubsub)     //订阅消息
+	Listen()              //监听消息
+	setWrite(chan string) //设置订阅的写入
+	Publish(string)       //广播消息
 }
 
 type User struct {
@@ -29,7 +37,7 @@ type User struct {
 	Pipe  chan string
 }
 
-func (u *User) BoardCast(msg string) {
+func (u *User) Publish(msg string) {
 	u.Write <- msg
 }
 
@@ -53,7 +61,7 @@ func (u *User) GetPipe() chan string {
 	return u.Pipe
 }
 
-func (u *User) Subscripe(s Subscription) {
+func (u *User) Subscripe(s Pubsub) {
 	u.Write = s.GetCollect()
 }
 
@@ -88,7 +96,7 @@ func (r *Room) GetCollect() chan string {
 }
 
 //广播消息
-func (r *Room) BoardCast(msg string) {
+func (r *Room) Publish(msg string) {
 	for _, ch := range r.Users {
 		log.Println("send to %v", r.Users)
 		ch <- msg
@@ -96,7 +104,7 @@ func (r *Room) BoardCast(msg string) {
 	}
 }
 
-func NewRoom(rid int8) Subscription {
+func NewRoom(rid int8) Pubsub {
 	return &Room{
 		RoomId: rid,
 		Users:  make(map[int8]chan string),
@@ -117,7 +125,7 @@ func main() {
 	for {
 		time.Sleep(time.Second)
 		log.Println("?????")
-		room.BoardCast("hello,somebody??")
+		room.Publish("hello,somebody??")
 	}
 
 }
