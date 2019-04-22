@@ -1,0 +1,31 @@
+<html>
+<div>
+    <input type="button" onclick="thisclick()" />
+</div>
+<script>
+    /** @var Websocket ws **/
+    var ws;
+
+    var thisclick = function () {
+        if (!ws || ws.readyState == 3) {
+            ws = new WebSocket("ws://localhost:8080/ws?accessToken=whatthyf");
+
+            ws.onmessage = function (evt) {
+                console.log(evt)
+            }
+            ws.onerror = function () {
+                console.log("error")
+            }
+            ws.onclose = function () {
+                console.log("close")
+            }
+        }
+        if (ws.readyState == 1) {
+            ws.send("hello?")
+        }
+        console.log(ws)
+    }
+
+</script>
+
+</html>
