@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/gorilla/websocket"
 	"github.com/tidwall/gjson"
 )
 
@@ -21,6 +22,8 @@ type Msg struct {
 	CMD int
 	//消息内容
 	Body string
+	//回应
+	Response string
 }
 
 func (msg Msg) GetCMD() int {
@@ -29,6 +32,11 @@ func (msg Msg) GetCMD() int {
 
 func (msg Msg) GetBody() string {
 	return msg.Body
+}
+
+func (msg Msg) Handle(conn *websocket.Conn) error {
+	conn.WriteMessage(websocket.TextMessage, []byte(msg.Response))
+	return errors.New("msg")
 }
 
 //JSONDecode 解析客户端发过来的消息

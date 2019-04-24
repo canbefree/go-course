@@ -24,7 +24,7 @@ func TestGjsonDecode(t *testing.T) {
 }
 
 func TestJsonEecode(t *testing.T) {
-	message := msg.Msg{CMD: 12, Msg: "Red"}
+	message := msg.Msg{CMD: 12, Body: "Red"}
 	strByte, err := json.Marshal(message)
 	if err != nil {
 		t.Error(err)
@@ -51,7 +51,7 @@ func TestJsonDecode(t *testing.T) {
 	if err != nil {
 		t.Error("error")
 	}
-	except := msg.Msg{CMD: 12, Msg: "Red"}
+	except := msg.Msg{CMD: 12, Body: "Red"}
 	if except != message {
 		t.Errorf("not equal %v != %v", except, message)
 	}

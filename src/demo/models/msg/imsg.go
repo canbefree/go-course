@@ -11,4 +11,6 @@ type iMsg interface {
 	GetBody() string
 	//处理消息
 	Handle(*websocket.Conn) error
+	//设置回应
+	SetResponse() error
 }
