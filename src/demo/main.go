@@ -1,10 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 	"sync"
 
+	"demo/models/msg"
 	"demo/models/user"
 
 	"github.com/gorilla/websocket"
@@ -27,17 +29,20 @@ func main() {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		accessToken := r.Form["accessToken"]
-		if accessToken == nil {
+		uid, err := getUID(r)
+
+		if err != nil {
+			w.Write([]byte("sorry,uid must need"))
 			return
 		}
 
-		User := user.NewUser(accessToken[0])
+		log.Printf("uid:%v  connected", uid)
+
+		User := user.NewUser(int8(uid))
 
 		conn, err := upgrader.Upgrade(w, r, nil)
 		defer conn.Close()
 		if err != nil {
-
 		}
 		var wg sync.WaitGroup
 		wg.Add(1)
@@ -55,12 +60,29 @@ func main() {
 func handle(wg *sync.WaitGroup, conn *websocket.Conn, user *user.User) {
 
 	defer wg.Done()
+	defer conn.Close()
 	for {
-		msgType, msg, err := conn.ReadMessage()
-		if err == nil {
-			fmt.Printf("%v:%v:%v", msgType, string(msg), user)
-		} else {
+		//一直读取客户端的消息
+		contentType, content, err := conn.ReadMessage()
+
+		if err != nil {
+			conn.WriteMessage(contentType, []byte("error!"))
 			break
+		} else {
+			switch contentType {
+			case websocket.TextMessage:
+				message, err := msg.JSONDecode(string(content))
+				if err != nil {
+					log.Printf("err: %v", err)
+					break
+				}
+				message.Handle(conn)
+				break
+			case websocket.CloseMessage:
+				conn.WriteMessage(contentType, []byte("byebye"))
+				conn.Close()
+				break
+			}
 		}
 	}
 
@@ -74,6 +96,11 @@ func handle(wg *sync.WaitGroup, conn *websocket.Conn, user *user.User) {
 	 *		2: 私聊
 	 * 		3: Player消息
 	 */
-	println(conn)
 
+}
+
+func getUID(r *http.Request) (int, error) {
+	uidArr := r.Form["uid"]
+	uidStr := uidArr[0]
+	return strconv.Atoi(uidStr)
 }

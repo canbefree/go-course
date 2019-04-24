@@ -31,6 +31,9 @@ func ws(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+
+
 //全员推送广播
 func boardCast(){
 	
