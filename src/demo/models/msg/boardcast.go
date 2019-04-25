@@ -5,8 +5,7 @@ type BoardCast struct {
 	Msg
 }
 
-
-func (msg BoardCast) SetResponse() error {
+func (msg *BoardCast) SetResponse() error {
 	msg.Response = ""
 	return nil
 }

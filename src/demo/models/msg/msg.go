@@ -26,15 +26,15 @@ type Msg struct {
 	Response string
 }
 
-func (msg Msg) GetCMD() int {
+func (msg *Msg) GetCMD() int {
 	return msg.CMD
 }
 
-func (msg Msg) GetBody() string {
+func (msg *Msg) GetBody() string {
 	return msg.Body
 }
 
-func (msg Msg) Handle(conn *websocket.Conn) error {
+func (msg *Msg) Handle(conn *websocket.Conn) error {
 	conn.WriteMessage(websocket.TextMessage, []byte(msg.Response))
 	return errors.New("msg")
 }
@@ -49,11 +49,11 @@ func JSONDecode(orginMsg string) (iMsg, error) {
 	case CMDBoardCast:
 		var msgBoardCast BoardCast
 		err = json.Unmarshal([]byte(orginMsg), &msgBoardCast)
-		return msgBoardCast, err
+		return &msgBoardCast, err
 	case CMDNormal:
 		var msgNormal Normal
 		err = json.Unmarshal([]byte(orginMsg), &msgNormal)
-		return msgNormal, err
+		return &msgNormal, err
 	default:
 		return nil, err
 	}
