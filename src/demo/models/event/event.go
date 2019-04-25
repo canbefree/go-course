@@ -2,18 +2,21 @@ package event
 
 //定义消息类型
 
+const (
+	TYPE_LEAVE = iota
+	TYPE_JOIN
+	TYPE_BOARDCAST
+	TYPE_NOMAL
+)
+
 //MsgEvent 消息发送
-type MsgEvent struct {
-	uid int8
-	msg string
+type Event struct {
+	TYPE int
+	BODY string
 }
 
-//JoinEvent 通知时间
-type JoinEvent struct {
-}
-
-type BoardCast struct {
-}
-
-type LeaveEvent struct {
+type iEvent interface {
+	GetType()
+	GetBODY()
+	Handle()
 }

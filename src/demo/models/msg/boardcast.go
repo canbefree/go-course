@@ -6,6 +6,6 @@ type BoardCast struct {
 }
 
 func (msg *BoardCast) SetResponse() error {
-	msg.Response = ""
+	msg.Response = "我爱你"
 	return nil
 }
