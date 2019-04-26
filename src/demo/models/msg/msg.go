@@ -47,9 +47,10 @@ func JSONDecode(orginMsg string) (iMsg, error) {
 	err := errors.New("error")
 	switch cmd {
 	case CMDBoardCast:
-		var msgBoardCast BoardCast
-		err = json.Unmarshal([]byte(orginMsg), &msgBoardCast)
-		return &msgBoardCast, err
+		// var msgBoardCast BoardCast
+		msgBoardCast := new(BoardCast)
+		err = json.Unmarshal([]byte(orginMsg), msgBoardCast)
+		return msgBoardCast, err
 	case CMDNormal:
 		var msgNormal Normal
 		err = json.Unmarshal([]byte(orginMsg), &msgNormal)

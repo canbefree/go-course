@@ -1,6 +1,8 @@
 package collection
 
 import (
+	"demo/models/cmd"
+	"demo/models/protocol"
 	"demo/models/user"
 	"log"
 )
@@ -29,24 +31,32 @@ func (s *Collection) Leave(u user.User) {
 
 func (s *Collection) BoardCast(msg string) {
 	log.Printf("服务器广播消息 %v  %v", msg, s.Users)
+	p := protocol.NewServer()
+	p.CMD = cmd.UserBoardCast
+	p.Content = msg
 	for _, user := range s.Users {
-		user.Output <- msg
+		user.Output <- p
 	}
 }
 
-func (s *Collection) sendMsg(u user.User, msg string) {
+func (s *Collection) sendMsg(uid int, msg string) {
 	log.Printf("服务器给 %v 发送消息 %v", u.ID, msg)
 	s.Users[u.ID].Output <- msg
 }
 
 //处理客户端线程的消息 转发线程
-func (s *Collection) Handle(input chan string) {
+func (s *Collection) Handle(input chan protocol.ClientProtocol) {
 	for {
 		select {
-		// { TYPE:0,BODY:"大叫号" }
-		case msgFromUseInputChan := <-input:
-			//直接发送到所有人
-			s.BoardCast(msgFromUseInputChan)
+		case p := <-input:
+			switch p.GetCMD {
+			case cmd.UserMessage:
+				s.sendMsg(p.GetFid(), p.GetContent())
+				break
+			case cmd.UserBoardCast:
+				s.BoardCast(p.GetContent())
+				break
+			}
 		}
 	}
 }

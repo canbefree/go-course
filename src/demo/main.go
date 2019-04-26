@@ -2,6 +2,7 @@ package main
 
 import (
 	"demo/models/collection"
+	"demo/models/protocol"
 	"demo/models/user"
 	"log"
 	"net/http"
@@ -21,8 +22,8 @@ var upgrader = websocket.Upgrader{
 func main() {
 
 	// new Chan ?
-	input := make(chan string)
-	output := make(chan string)
+	input := make(chan protocol.ClientProtocol)
+	output := make(chan protocol.ServerProtocol)
 
 	coll := collection.NeCollection()
 	go coll.Handle(input)

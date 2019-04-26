@@ -18,5 +18,4 @@ type Event struct {
 type iEvent interface {
 	GetType()
 	GetBODY()
-	Handle()
 }

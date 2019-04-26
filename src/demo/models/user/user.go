@@ -1,9 +1,7 @@
 package user
 
 import (
-	"demo/models/msg"
-	"fmt"
-	"log"
+	"demo/models/protocol"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -11,10 +9,14 @@ import (
 
 // User 定义
 type User struct {
-	ID     int            //用户ID
-	Conn   websocket.Conn //客户端连接
-	Input  chan string    //输入数据
-	Output chan string    //输出数据
+	ID     int                          //用户ID
+	Conn   websocket.Conn               //客户端连接
+	Input  chan protocol.ClientProtocol //输入数据
+	Output chan protocol.ServerProtocol //输出数据
+}
+
+//输出
+type Output struct {
 }
 
 // NewUser 返回一个新的用户
@@ -32,8 +34,8 @@ func (u *User) Handle(wg *sync.WaitGroup, conn *websocket.Conn) {
 	go func() {
 		for {
 			select {
-			case msgFromOtherUser := <-u.Output:
-				conn.WriteMessage(websocket.TextMessage, []byte(msgFromOtherUser))
+			case p := <-u.Output:
+
 				break
 			}
 		}
@@ -47,18 +49,14 @@ func (u *User) Handle(wg *sync.WaitGroup, conn *websocket.Conn) {
 			conn.WriteMessage(contentType, []byte("error!"))
 			break
 		} else {
+
 			switch contentType {
 			case websocket.TextMessage:
-				message, err := msg.JSONDecode(string(content))
-				if err != nil {
-					log.Printf("err: %v", err)
-					break
-				}
-				fmt.Println(message)
-				u.Input <- message.GetBody()
-				log.Printf("接受消息 %v", message.GetBody())
-				// u.Input
-				// message.Handle(conn)
+
+				// 	//格式化message
+				p := &protocol.Client{}
+				p.Decode([]byte(content))
+				u.HandleClientMsg(p)
 				break
 			case websocket.CloseMessage:
 				conn.WriteMessage(contentType, []byte("byebye"))
@@ -68,4 +66,9 @@ func (u *User) Handle(wg *sync.WaitGroup, conn *websocket.Conn) {
 		}
 	}
 
+}
+
+//HandleClientMsg 处理客户端的消息
+func (u *User) HandleClientMsg(p protocol.Protocol) {
+	u.Input <- p
 }
