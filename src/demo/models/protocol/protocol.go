@@ -1,13 +1,5 @@
 package protocol
 
-/**
-struct{
-	CMD
-	BODY      //boardcast  normal
-	VERSION
-}
-
-*/
 //Protocol 协议
 type Protocol interface {
 	GetCMD() int
@@ -25,6 +17,8 @@ type ClientProtocol interface {
 //ServerProtocol 服务器协议
 type ServerProtocol interface {
 	Protocol
+	//Handle 处理output消息格式推送给客户端
+	Handle()
 }
 
 type Base struct {
@@ -32,6 +26,12 @@ type Base struct {
 	FID     int    //指定人ID
 	Version string //版本号
 	Content string //内容
+}
+
+func (b *Base) Decode([]byte) {}
+
+func (b *Base) Encode() ([]byte, error) {
+	return nil, nil
 }
 
 func (b *Base) GetCMD() int {

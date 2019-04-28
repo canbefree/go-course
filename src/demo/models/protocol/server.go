@@ -7,3 +7,7 @@ type Server struct {
 func NewServer() *Server {
 	return &Server{}
 }
+
+func (p *Server) Handle() {
+
+}

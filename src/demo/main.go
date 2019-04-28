@@ -21,11 +21,10 @@ var upgrader = websocket.Upgrader{
 
 func main() {
 
-	// new Chan ?
 	input := make(chan protocol.ClientProtocol)
-	output := make(chan protocol.ServerProtocol)
 
 	coll := collection.NeCollection()
+	//input这个通道接收 收集所有用户发来的消息推送给相应的玩家
 	go coll.Handle(input)
 
 	//用户使用http 方式登陆获取accesstoken
@@ -52,7 +51,9 @@ func main() {
 		log.Printf("uid:%v  connected", uid)
 		User := user.NewUser(uid)
 		User.Input = input
+		output := make(chan protocol.ServerProtocol)
 		User.Output = output
+		User.Conn = conn
 
 		coll.Join(*User)
 
@@ -60,7 +61,7 @@ func main() {
 
 		//处理玩家的 群消息 指定用户私聊消息 玩法和数据
 		// go handle(&wg, conn, User)
-		go User.Handle(&wg, conn)
+		go User.Handle(&wg)
 
 		//必须有这个，不然连接立马结束了。
 		wg.Wait()

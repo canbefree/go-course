@@ -39,9 +39,12 @@ func (s *Collection) BoardCast(msg string) {
 	}
 }
 
-func (s *Collection) sendMsg(uid int, msg string) {
-	log.Printf("服务器给 %v 发送消息 %v", u.ID, msg)
-	s.Users[u.ID].Output <- msg
+func (s *Collection) SendMsg(uid int, msg string) {
+	log.Printf("服务器给 %v 发送消息 %v", uid, msg)
+	p := protocol.NewServer()
+	p.CMD = cmd.UserMessage
+	p.Content = msg
+	s.Users[uid].Output <- p
 }
 
 //处理客户端线程的消息 转发线程
@@ -49,9 +52,9 @@ func (s *Collection) Handle(input chan protocol.ClientProtocol) {
 	for {
 		select {
 		case p := <-input:
-			switch p.GetCMD {
+			switch p.GetCMD() {
 			case cmd.UserMessage:
-				s.sendMsg(p.GetFid(), p.GetContent())
+				s.SendMsg(p.GetFID(), p.GetContent())
 				break
 			case cmd.UserBoardCast:
 				s.BoardCast(p.GetContent())
