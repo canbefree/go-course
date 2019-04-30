@@ -67,7 +67,7 @@ func main() {
 		wg.Wait()
 	})
 
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe("0.0.0.0:8080", nil)
 }
 
 func getUID(r *http.Request) (int, error) {
