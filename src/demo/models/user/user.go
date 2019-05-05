@@ -1,6 +1,7 @@
 package user
 
 import (
+	"demo/models/cmd"
 	"demo/models/protocol"
 	"log"
 	"sync"
@@ -27,11 +28,15 @@ func NewUser(id int) *User {
 	}
 }
 
+// CollectMsg 收集消息
+func (u *User) CollectMsg(p protocol.ServerProtocol) {
+	u.Output <- p
+}
+
 func (u *User) Handle(wg *sync.WaitGroup) {
 	conn := u.Conn
 	defer wg.Done()
-	defer conn.Close()
-	defer log.Printf("客户端退出:%v", u.ID)
+	defer u.deferHandle()
 
 	//通过chan来获取大厅的数据？
 	go func() {
@@ -71,11 +76,28 @@ func (u *User) Handle(wg *sync.WaitGroup) {
 
 }
 
+func (u *User) deferHandle() {
+	log.Printf("客户端退出:%v", u.ID) //客户端退出需要通知服务器
+	p := &protocol.Client{}
+	p.CMD = cmd.Leave
+	p.FromID = u.ID
+	u.Input <- p
+	u.Close()
+}
+
 //HandleClientMsg 处理客户端的消息
-func (u *User) HandleClientMsg(p protocol.Protocol) {
+func (u *User) HandleClientMsg(p protocol.ClientProtocol) {
 	u.Input <- p
 }
 
 func (u *User) HandleMessageFromServer(p protocol.ServerProtocol) {
+	if p.GetCMD() == cmd.Kicking {
+		u.Close()
+	}
 	u.Conn.WriteJSON(p)
+}
+
+func (u *User) Close() {
+	log.Printf("关闭连接:%v", u)
+	u.Conn.Close()
 }

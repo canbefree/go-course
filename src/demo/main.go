@@ -29,10 +29,8 @@ func main() {
 
 	//用户使用http 方式登陆获取accesstoken
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/views/index.html", 301)
+		w.Write([]byte("?兄弟你想干嘛"))
 	})
-
-	http.Handle("/views/", http.StripPrefix("/views/", http.FileServer(http.Dir("./views/"))))
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()

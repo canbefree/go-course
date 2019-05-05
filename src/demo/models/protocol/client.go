@@ -14,3 +14,7 @@ func (p *Client) Decode(msg []byte) {
 func (p *Client) Encode() ([]byte, error) {
 	return json.Marshal(p)
 }
+
+func (p *Client) GetFromID() int {
+	return p.FromID
+}

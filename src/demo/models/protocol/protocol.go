@@ -6,12 +6,13 @@ type Protocol interface {
 	Decode([]byte)
 	Encode() ([]byte, error)
 	GetContent() string //获取消息内容
-	GetFID() int
+	GetFriendID() int
 }
 
 //ClientProtocol 客户端协议
 type ClientProtocol interface {
 	Protocol
+	GetFromID() int
 }
 
 //ServerProtocol 服务器协议
@@ -23,7 +24,8 @@ type ServerProtocol interface {
 
 type Base struct {
 	CMD     int    //指令
-	FID     int    //指定人ID
+	FromID  int    //从哪里来
+	ToID    int    //发给谁？
 	Version string //版本号
 	Content string //内容
 }
@@ -42,6 +44,6 @@ func (b *Base) GetContent() string {
 	return b.Content
 }
 
-func (b *Base) GetFID() int {
-	return b.FID
+func (b *Base) GetFriendID() int {
+	return b.ToID
 }
