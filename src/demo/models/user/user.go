@@ -15,8 +15,8 @@ import (
 type User struct {
 	ID     int                          //用户ID
 	Conn   *websocket.Conn              //客户端连接
-	Input  chan protocol.ClientProtocol //这里指客户端发来的消息
-	Output chan protocol.ServerProtocol //这里指线程需要发给客户端的消息
+	Input  chan protocol.ClientProtocol //接收浏览器客户端发来的消息
+	Output chan protocol.ServerProtocol //读取服务器放入通道内容
 
 	UniqueID string //全局唯一的ID
 }
@@ -27,8 +27,10 @@ type Output struct {
 
 // NewUser 返回一个新的用户
 func NewUser(id int) *User {
+	output := make(chan protocol.ServerProtocol)
 	return &User{
 		ID:       id,
+		Output:   output,
 		UniqueID: strconv.FormatInt(time.Now().Unix(), 10),
 	}
 }
@@ -48,6 +50,9 @@ func (u *User) Handle(wg *sync.WaitGroup) {
 		for {
 			select {
 			case p := <-u.Output:
+				if p == nil {
+					return
+				}
 				log.Printf("向客户端写入消息:%v", p)
 				u.HandleMessageFromServer(p)
 				break
@@ -69,7 +74,7 @@ func (u *User) Handle(wg *sync.WaitGroup) {
 				p := &protocol.Client{}
 				p.Decode([]byte(content))
 				log.Printf("服务器接收到消息:%v", p)
-				u.HandleClientMsg(p)
+				u.ReadClientMsg(p)
 				break
 			case websocket.CloseMessage:
 				conn.WriteMessage(contentType, []byte("byebye"))
@@ -88,11 +93,11 @@ func (u *User) deferHandle() {
 	p.FromID = u.ID
 	p.Content = u.UniqueID
 	u.Input <- p
-	u.Close()
+	// u.Close()
 }
 
 //HandleClientMsg 处理客户端的消息
-func (u *User) HandleClientMsg(p protocol.ClientProtocol) {
+func (u *User) ReadClientMsg(p protocol.ClientProtocol) {
 	u.Input <- p
 }
 
@@ -105,5 +110,6 @@ func (u *User) HandleMessageFromServer(p protocol.ServerProtocol) {
 
 func (u *User) Close() {
 	log.Printf("关闭连接:%v", u)
+	close(u.Output)
 	u.Conn.Close()
 }

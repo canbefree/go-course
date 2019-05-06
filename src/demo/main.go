@@ -49,8 +49,6 @@ func main() {
 		log.Printf("uid:%v  connected", uid)
 		User := user.NewUser(uid)
 		User.Input = input
-		output := make(chan protocol.ServerProtocol)
-		User.Output = output
 		User.Conn = conn
 
 		coll.Join(*User)
