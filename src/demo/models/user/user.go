@@ -49,8 +49,8 @@ func (u *User) Handle(wg *sync.WaitGroup) {
 	go func() {
 		for {
 			select {
-			case p := <-u.Output:
-				if p == nil {
+			case p, ok := <-u.Output:
+				if !ok {
 					return
 				}
 				log.Printf("向客户端写入消息:%v", p)
