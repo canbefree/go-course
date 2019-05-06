@@ -4,7 +4,9 @@ import (
 	"demo/models/cmd"
 	"demo/models/protocol"
 	"log"
+	"strconv"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -15,6 +17,8 @@ type User struct {
 	Conn   *websocket.Conn              //客户端连接
 	Input  chan protocol.ClientProtocol //这里指客户端发来的消息
 	Output chan protocol.ServerProtocol //这里指线程需要发给客户端的消息
+
+	UniqueID string //全局唯一的ID
 }
 
 //输出
@@ -24,7 +28,8 @@ type Output struct {
 // NewUser 返回一个新的用户
 func NewUser(id int) *User {
 	return &User{
-		ID: id,
+		ID:       id,
+		UniqueID: strconv.FormatInt(time.Now().Unix(), 10),
 	}
 }
 
@@ -81,6 +86,7 @@ func (u *User) deferHandle() {
 	p := &protocol.Client{}
 	p.CMD = cmd.Leave
 	p.FromID = u.ID
+	p.Content = u.UniqueID
 	u.Input <- p
 	u.Close()
 }
@@ -91,10 +97,10 @@ func (u *User) HandleClientMsg(p protocol.ClientProtocol) {
 }
 
 func (u *User) HandleMessageFromServer(p protocol.ServerProtocol) {
+	u.Conn.WriteJSON(p)
 	if p.GetCMD() == cmd.Kicking {
 		u.Close()
 	}
-	u.Conn.WriteJSON(p)
 }
 
 func (u *User) Close() {

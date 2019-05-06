@@ -39,16 +39,21 @@ func (s *Collection) Kicking(u user.User) {
 	log.Printf("踢人")
 	p := protocol.NewServer()
 	p.CMD = cmd.Kicking
-
 	p.Content = "你被踢了,不好意思哈" + time.Now().String()
 	u.CollectMsg(p)
 	// 由于是异步请求，不能保证用户列表原子性。所以由踢人改成覆写
 	// delete(s.Users, u.ID)
 }
 
-func (s *Collection) Leave(userId int) {
-	delete(s.Users, userId)
-	log.Printf("%v 离开服务器 %v", userId, s.GetOnlineUsersID())
+func (s *Collection) Leave(uniqueID string) {
+	for k, v := range s.Users {
+		if v.UniqueID == uniqueID {
+			delete(s.Users, k)
+			log.Printf("%v 离开服务器 %v", k, s.GetOnlineUsersID())
+			return
+		}
+	}
+	// delete(s.Users, userId)
 }
 
 func (s *Collection) BoardCast(msg string) {
@@ -93,8 +98,9 @@ func (s *Collection) Handle(input chan protocol.ClientProtocol) {
 				s.BoardCast(p.GetContent())
 				break
 			case cmd.Leave:
-				uid := p.GetFromID()
-				s.Leave(uid)
+				// uid := p.GetFromID()
+				uniqueID := p.GetContent()
+				s.Leave(uniqueID)
 				break
 			}
 		}
