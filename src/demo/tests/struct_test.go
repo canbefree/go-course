@@ -1,6 +1,10 @@
 package test
 
-import "testing"
+import (
+	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
+)
 
 type Student struct {
 	Name string
@@ -8,11 +12,12 @@ type Student struct {
 }
 
 func TestDefine(t *testing.T) {
-	// var s1 Student
-	// s2 := new(Student)
-	// s3 := &Student{}
-
-	// if s1 != s2 {
-	// 	t.Errorf("s1 s2 : %v %v")
-	// }
+	Convey("l", t, func() {
+		var s1 Student
+		s1.Age = 123
+		s2 := new(Student)
+		s3 := &Student{}
+		So(s2, ShouldResemble, s3)
+		So(s1, ShouldResemble, s2)
+	})
 }
