@@ -1,6 +1,10 @@
 package test
 
-import "testing"
+import (
+	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
+)
 
 type User struct {
 	Name string
@@ -21,5 +25,9 @@ func TestStruct(t *testing.T) {
 	b.Name = "**"
 	// *a.Name = "as"
 	t.Logf("%v:%v:%v", u, &u, *a)
+
+	Convey("???", t, func() {
+		So(0, ShouldBeBlank)
+	})
 
 }
