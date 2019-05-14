@@ -4,51 +4,75 @@ import (
 	"demo/models/card"
 	"testing"
 
-	"github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestCard(t *testing.T) {
-	convey.Convey("testCard", t, func() {
+	Convey("testCard", t, func() {
 		card := &card.Card{Index: 12, Shape: 3}
-		convey.Convey("testCardGetValue", func() {
-			convey.So(card.GetValue(), convey.ShouldEqual, 1203)
+		Convey("testCardGetValue", func() {
+			So(card.GetValue(), ShouldEqual, 1203)
 		})
 	})
 }
 
 func TestCardSet(t *testing.T) {
-	convey.Convey("CardSet", t, func() {
-		cs := &card.CardSet{}
+	Convey("CardSet", t, func() {
+		c1 := &card.Card{1, 2}
+		c2 := &card.Card{1, 4}
+		c3 := &card.Card{2, 3}
+		c4 := &card.Card{5, 2}
+		object := &card.CardSet{Cards: []*card.Card{c1, c4, c2, c3}}
 		c := &card.Card{1, 3}
+		Convey("rand", func() {
+			subject := object
+			except =
+				object.Rand()
 
-		convey.Convey("push", func() {
-			cs.PushCard(c)
-			convey.So(cs.Cards, convey.ShouldContain, c)
 		})
-		convey.Convey("pop", func() {
-			cs.PushCard(c)
-			cp, _ := cs.PopCard()
-			convey.So(cp, convey.ShouldEqual, c)
+		Convey("del-global", func() {
+			object.PushCard(c2)
+			object.DelCard(c2, true)
+			except := &card.CardSet{Cards: []*card.Card{c1, c4, c3}}
+			So(object, ShouldResemble, except)
 		})
-		convey.Convey("sort", func() {
-			c1 := &card.Card{4, 3}
-			c2 := &card.Card{1, 3}
-			c3 := &card.Card{2, 3}
-			c4 := &card.Card{2, 2}
 
-			cs.PushCard(c1)
-			cs.PushCard(c4)
-			cs.PushCard(c2)
-			cs.PushCard(c3)
-			cs = cs.Sort()
+		Convey("del-one", func() {
+			object.PushCard(c2)
+			object.DelCard(c2, false)
+			except := &card.CardSet{Cards: []*card.Card{c1, c4, c3, c2}}
+			So(object, ShouldResemble, except)
+		})
 
-			csDst := &card.CardSet{}
-			csDst.PushCard(c2)
-			csDst.PushCard(c4)
-			csDst.PushCard(c3)
-			csDst.PushCard(c1)
+		Convey("unset", func() {
+			object.Unset(1)
+			except := &card.CardSet{Cards: []*card.Card{c1, c2, c3}}
+			So(object, ShouldResemble, except)
+		})
 
-			convey.So(cs, convey.ShouldResemble, csDst)
+		Convey("inserts", func() {
+			object.InsertCards([]*card.Card{c1, c2})
+			except := &card.CardSet{Cards: []*card.Card{c1, c4, c2, c3, c1, c2}}
+			So(object, ShouldResemble, except)
+		})
+
+		Convey("insert", func() {
+			object.InsertCard(c, 3)
+			except := &card.CardSet{Cards: []*card.Card{c1, c4, c2, c, c3}}
+			So(object, ShouldResemble, except)
+		})
+		Convey("push", func() {
+			object.PushCard(c)
+			So(object.Cards, ShouldContain, c)
+		})
+		Convey("pop", func() {
+			cp, _ := object.PopCard()
+			So(cp, ShouldEqual, c3)
+		})
+		Convey("sort", func() {
+			object = object.Sort()
+			except := &card.CardSet{Cards: []*card.Card{c1, c2, c3, c4}}
+			So(object, ShouldResemble, except)
 		})
 	})
 }

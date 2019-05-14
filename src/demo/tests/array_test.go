@@ -4,10 +4,27 @@ import (
 	"testing"
 
 	"github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestXXX(t *testing.T) {
-	t.Log("hello world")
+func TestAppend(t *testing.T) {
+	Convey("array", t, func() {
+		arr1 := []int{1, 2, 3, 4, 5}
+		arr2 := make([]int, 3)
+		Convey("merge1", func() {
+			arr1 = append(arr1, arr2...)
+			except := []int{1, 2, 3, 4, 5, 0, 0, 0}
+			So(arr1, ShouldResemble, except)
+		})
+
+		Convey("copy", func() {
+			//第一个参数 为目标数组
+			copy(arr1, arr2)
+			except := []int{0, 0, 0, 4, 5}
+			So(arr1, ShouldResemble, except)
+		})
+
+	})
 }
 
 func Benchmark_Add(b *testing.B) {
