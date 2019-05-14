@@ -26,8 +26,8 @@ func TestCardSet(t *testing.T) {
 		c := &card.Card{1, 3}
 		Convey("rand", func() {
 			subject := object
-			except =
-				object.Rand()
+			except := object.Rand()
+			So(subject.Cards, ShouldResemble, except.Cards)
 
 		})
 		Convey("del-global", func() {

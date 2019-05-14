@@ -15,6 +15,12 @@ func TestValueOf(t *testing.T) {
 			s := 10
 			So(reflect.ValueOf(a), ShouldNotEqual, reflect.ValueOf(s))
 		})
+
+		Convey("type value relation", func() {
+			a := 10
+			So(reflect.TypeOf(a), ShouldEqual, reflect.ValueOf(a).Type())
+		})
+
 		Convey("convert", func() {
 			var num int = 10000
 			value := reflect.ValueOf(num)
