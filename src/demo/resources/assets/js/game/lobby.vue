@@ -17,7 +17,7 @@
     <div>
       <p>模拟断线重连(登陆事件触发)</p>
       <input v-model="uid">
-      <button @click="TriggerPress">{{button_text}}</button>
+      <button @click="TriggerPress">{{button_text}}{{Connected}}</button>
     </div>
 
     <div>
@@ -55,9 +55,9 @@
 import { Msg } from "@/game/msg";
 import Cheer from "@/game/cheer/client";
 import Rand from "@/game/rand/client";
-import { WS } from "@/lib";
 
-console.log(WS);
+import { WS } from "@/lib";
+import { ProtocalBody } from "@/protocol";
 
 export default {
   components: { Cheer, Rand },
@@ -72,6 +72,8 @@ export default {
 
   data() {
     return {
+      Connected: false,
+
       button_text: "连接", //为了保证按钮更新及时
       conn: null, //连接
 
@@ -86,12 +88,18 @@ export default {
     };
   },
 
-  mounted() {},
+  mounted() {
+    //注册状态修改
+    WS.registerStatusFunction(v => {
+      this.Connected = v;
+    });
+    //注册消息接受
+  },
 
   methods: {
     TriggerPress: function() {
-      if (this.isConnected()) {
-        return this.close();
+      if (this.Connected) {
+        return WS.Close();
       } else {
         if (!this.uid) {
           alert("请输入您的身份ID!");
@@ -101,14 +109,17 @@ export default {
       }
     },
     connect() {
-      if (!this.isConnected()) {
-        let url = "ws://" + this.host + ":" + this.port + "/ws?uid=" + this.uid;
-        this.conn = new WebSocket(url);
-      }
-      this.conn.onopen = this.onOpen;
-      this.conn.onmessage = this.onMessage;
-      this.conn.onerror = this.onError;
-      this.conn.onclose = this.onClose;
+      let url = "ws://" + this.host + ":" + this.port + "/ws?uid=" + this.uid;
+      WS.Init(url);
+      //讲vue的变量传递到 WS中 让变量的变化可以使前端相应发生变化  这个方法居然可以行 我操
+      // if (!this.isConnected()) {
+      //   let url = "ws://" + this.host + ":" + this.port + "/ws?uid=" + this.uid;
+      //   this.conn = new WebSocket(url);
+      // }
+      // this.conn.onopen = this.onOpen;
+      // this.conn.onmessage = this.onMessage;
+      // this.conn.onerror = this.onError;
+      // this.conn.onclose = this.onClose;
     },
 
     gameSelect() {
@@ -134,11 +145,13 @@ export default {
       this.button_text = "重新连接";
       console.log("msg close");
     },
+
     BoardCast() {
-      if (this.isConnected()) {
-        let m = new Msg(this.conn);
-        m.boardCast(this.bmsg);
-      }
+      WS.Send(ProtocalBody.Set({ CMD: 1 }));
+      // if (this.isConnected()) {
+      // let m = new Msg(this.conn);
+      // m.boardCast(this.bmsg);
+      // }
     },
     SendMsg() {
       if (this.isConnected()) {
@@ -147,6 +160,7 @@ export default {
       }
     },
     isConnected() {
+      return WS.Connected;
       if (this.conn && this.conn.readyState) {
         return this.conn.readyState === 1 ? true : false;
       }
