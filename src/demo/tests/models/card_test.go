@@ -76,3 +76,15 @@ func TestCardSet(t *testing.T) {
 		})
 	})
 }
+
+func TestCardPool(t *testing.T) {
+	Convey("test pool", t, func() {
+		Convey("init", func() {
+			cardPool := card.NewCardPool()
+			cardPool.Init()
+			//一副牌应该是54张
+			So(len(cardPool.Cards), ShouldEqual, 54)
+			So(cardPool.Cards, ShouldContain, &card.Card{Index: 9, Shape: 3})
+		})
+	})
+}

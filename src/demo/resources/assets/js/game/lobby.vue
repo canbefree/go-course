@@ -6,8 +6,12 @@
       <p>大厅测试端</p>
     </div>
     <div class="row">
-      <button>选择斗地主游戏</button>
-      <button>选择转盘游戏</button>
+      <button @click="gameSelect('cheer')">选择干瞪眼游戏</button>
+      <button @click="gameSelect('rand')">选择转盘游戏</button>
+    </div>
+
+    <div>
+      <component v-bind:is="subGame"></component>
     </div>
 
     <div>
@@ -49,8 +53,14 @@
 
 <script>
 import { Msg } from "@/game/msg";
+import Cheer from "@/game/cheer/client";
+import Rand from "@/game/rand/client";
+import { WS } from "@/lib";
+
+console.log(WS);
 
 export default {
+  components: { Cheer, Rand },
   props: {
     host: {
       required: true
@@ -64,12 +74,15 @@ export default {
     return {
       button_text: "连接", //为了保证按钮更新及时
       conn: null, //连接
+
       uid: 123,
       boardcast: null,
       fid: null,
       fmsg: null,
       bmsg: null,
-      public_msg: ""
+      public_msg: "",
+
+      subGame: "cheer" //动态组件
     };
   },
 
@@ -97,6 +110,11 @@ export default {
       this.conn.onerror = this.onError;
       this.conn.onclose = this.onClose;
     },
+
+    gameSelect() {
+      this.subGame = arguments[0];
+    },
+
     close() {
       this.button_text = "连接";
       this.conn.close();

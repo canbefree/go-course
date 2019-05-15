@@ -23,6 +23,10 @@ func NeCollection() *Collection {
 func (s *Collection) Join(u user.User) {
 	//检查当前连接是否在线,是否需要踢出登录用户
 	existUser, ok := s.Users[u.ID]
+
+	//todo checkGameList 检查玩家目前的状态 online or game1 or unline
+	//replace userinfo  redis userinfo {user,pos,status} gameInfo{}
+
 	//定义一个锁
 	if ok == true {
 		//todo 踢人 我踢我自己?

@@ -19,6 +19,10 @@ func DeepCopy(src interface{}) interface{} {
 func copyRecursive(src, dst reflect.Value) {
 	switch src.Kind() {
 	case reflect.Ptr:
+		original := src.Elem()
+		newDst := reflect.New(original.Type())
+		dst.Set(newDst) //将 dst的指针指向 newDst
+		copyRecursive(original, newDst.Elem())
 		break
 	default:
 		dst.Set(src)

@@ -108,7 +108,7 @@ func (cardSet *CardSet) Sort() *CardSet {
 	}
 	return cardSet
 }
-    
+
 func (cardSet *CardSet) Rand() *CardSet {
 	rand.Seed(time.Now().UnixNano())
 
