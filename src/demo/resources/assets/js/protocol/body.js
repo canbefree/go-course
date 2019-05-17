@@ -1,6 +1,7 @@
 let Body = function () {
+
     let B = function () {
-        this.CMD
+        this.CMD = 1
         this.POS
         this.BODY
     }
@@ -23,12 +24,29 @@ let Body = function () {
         return this
     }
 
-    return new B
-}
+    B.prototype.AddCMD = function (value) {
+        this.CMD = value
+        return this
+    }
 
-let ProtocalBody = new Body()
+    B.prototype.AddContent = function (value) {
+        this.Content = value
+        return this
+    }
 
-// ob = { CMD: 12 }
-// console.log(ProtocalBody.Set(ob).JsonEncode())
+    let New = function () {
+        return new B()
+    }
+
+    return {
+        New: New,
+    }
+}()
+
+
+// s = Body.New().AddCMD(3)
+// console.log(s.CMD)
+let ProtocalBody = BODY
 
 export { ProtocalBody }
+

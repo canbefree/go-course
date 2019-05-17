@@ -34,7 +34,7 @@
     <div>
       <input v-model="fid">
       <input v-model="fmsg">
-      <button @click="SendMsg">给指定对象发送消息</button>
+      <button @click="SendMsg">给指定对象发送消息1</button>
     </div>
 
     <p>消息窗口</p>
@@ -93,7 +93,10 @@ export default {
     WS.registerStatusFunction(v => {
       this.Connected = v;
     });
-    //注册消息接受
+    //注册消息接受 不同的消息处理机制都要处理一遍
+    WS.registerMsgHandleFunction(v => {
+      this.public_msg += v;
+    });
   },
 
   methods: {
@@ -111,63 +114,19 @@ export default {
     connect() {
       let url = "ws://" + this.host + ":" + this.port + "/ws?uid=" + this.uid;
       WS.Init(url);
-      //讲vue的变量传递到 WS中 让变量的变化可以使前端相应发生变化  这个方法居然可以行 我操
-      // if (!this.isConnected()) {
-      //   let url = "ws://" + this.host + ":" + this.port + "/ws?uid=" + this.uid;
-      //   this.conn = new WebSocket(url);
-      // }
-      // this.conn.onopen = this.onOpen;
-      // this.conn.onmessage = this.onMessage;
-      // this.conn.onerror = this.onError;
-      // this.conn.onclose = this.onClose;
     },
 
     gameSelect() {
       this.subGame = arguments[0];
     },
 
-    close() {
-      this.button_text = "连接";
-      this.conn.close();
-    },
-    onOpen(e) {
-      console.log(this.conn);
-      this.button_text = "断开连接";
-    },
-    onMessage(e) {
-      this.public_msg += e.data + "\n";
-      console.log("msg from server:", e.data);
-    },
-    onError(e) {
-      console.log("msg error");
-    },
-    onClose(e) {
-      this.button_text = "重新连接";
-      console.log("msg close");
+    BoardCast() {
+      ProtocalBody.AddVlue(CMD);
+      WS.Send(ProtocalBody.Set({ CMD: 1 }));
     },
 
-    BoardCast() {
-      WS.Send(ProtocalBody.Set({ CMD: 1 }));
-      // if (this.isConnected()) {
-      // let m = new Msg(this.conn);
-      // m.boardCast(this.bmsg);
-      // }
-    },
     SendMsg() {
-      if (this.isConnected()) {
-        let m = new Msg(this.conn);
-        m.sendMsg(this.fid, this.fmsg);
-      }
-    },
-    isConnected() {
-      return WS.Connected;
-      if (this.conn && this.conn.readyState) {
-        return this.conn.readyState === 1 ? true : false;
-      }
-      return false;
-    },
-    getNowTime() {
-      return Math.floor(new Date().getTime() / 1000);
+      WS.Send(ProtocalBody.Set({ CMD: 1, FId: 123 }));
     }
   }
 };

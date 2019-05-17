@@ -3,7 +3,8 @@ import { ProtocalBody } from "../protocol";
 let WS = function () {
     let conn = null
     let connected = false
-    let func = null
+    let _statusFunc = null
+    let _msgHandleFunc = null
 
     let wsUrl = null
 
@@ -38,40 +39,52 @@ let WS = function () {
         return true
     }
 
+
+
     //利用回调修改 vue前端的连接状态
     let registerStatusFunction = (f) => {
-        func = f
+        _statusFunc = f
+    }
+
+
+    let registerMsgHandleFunction = (f) => {
+        _msgHandleFunc = f
     }
 
     let OnOpen = (e) => {
         console.log('onopen')
         connected = true
-        func(true)
+        _statusFunc(true)
     }
 
     let OnClose = (e) => {
         console.log('onclose')
         connected = false
-        func(false)
+        _statusFunc(false)
     }
     let OnMessage = (e) => {
-
-    }
-    let OnError = (e) => {
-        connected = false
+        return _msgHandleFunc(e.data)
     }
 
+    //关闭连接
     let Close = () => {
         conn.close()
-        func(false)
+        _statusFunc(false)
     }
+
+    let getNowTime = () => {
+        return Math.floor(new Date().getTime() / 1000);
+    }
+
     return {
         Connected: connected,
         Init: Init,
         Send: Send,
         Close: Close,
-        registerStatusFunction: registerStatusFunction
+        registerStatusFunction: registerStatusFunction,
+        registerMsgHandleFunction: registerMsgHandleFunction,
     }
+
 
 }()
 
