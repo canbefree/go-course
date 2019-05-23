@@ -1,5 +1,11 @@
 import { ProtocalBody } from "../protocol";
 
+let Version = 1;
+let CMD_NORMAL = 1;
+let CMD_BOARDCAST = 2;
+let CMD_GAME = 3;
+
+
 let WS = function () {
     let conn = null
     let connected = false
@@ -22,7 +28,8 @@ let WS = function () {
 
     let Send = (protocolBody) => {
         if (!check()) return false;
-        conn.send(ProtocalBody.stringify())
+        console.log("send:", protocolBody.stringify())
+        conn.send(protocolBody.stringify())
     }
 
     let check = () => {
@@ -76,6 +83,11 @@ let WS = function () {
         return Math.floor(new Date().getTime() / 1000);
     }
 
+    let NormalMsg = () => {
+        ProtocalBody.New().AddCMD
+        conn.send();
+    }
+
     return {
         Connected: connected,
         Init: Init,
@@ -83,6 +95,14 @@ let WS = function () {
         Close: Close,
         registerStatusFunction: registerStatusFunction,
         registerMsgHandleFunction: registerMsgHandleFunction,
+
+
+        //发送普通消息
+        NormalMsg: NomalMsg,
+        //广播
+        BoardCast: BoardCast,
+        //游戏逻辑协议
+        GameMsg: GameMsg,
     }
 
 

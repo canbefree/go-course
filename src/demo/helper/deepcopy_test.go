@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"demo/helper"
 	"reflect"
 	"testing"
 
@@ -23,7 +22,7 @@ func TestDeepCopy(t *testing.T) {
 			//整形赋值
 			i := 10
 			a := i
-			b := helper.DeepCopy(i).(int)
+			b := DeepCopy(i).(int)
 			a = 1
 
 			So(i, ShouldNotEqual, a)
@@ -35,7 +34,7 @@ func TestDeepCopy(t *testing.T) {
 				Age  int
 			}
 			student := &Student{Name: "小明", Age: 18}
-			student_copy := helper.DeepCopy(student).(*Student)
+			student_copy := DeepCopy(student).(*Student)
 			So(student, ShouldResemble, student_copy)
 			student_copy.Name = "小光"
 			So(student_copy, ShouldResemble, &Student{Name: "小光", Age: 18})

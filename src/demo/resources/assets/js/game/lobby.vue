@@ -6,8 +6,8 @@
       <p>大厅测试端</p>
     </div>
     <div class="row">
-      <button @click="gameSelect('cheer')">选择干瞪眼游戏</button>
-      <button @click="gameSelect('rand')">选择转盘游戏</button>
+      <button @click="gameSelect('cheer')">选择干瞪眼</button>
+      <button @click="gameSelect('rand')">选择转盘</button>
     </div>
 
     <div>
@@ -57,7 +57,7 @@ import Cheer from "@/game/cheer/client";
 import Rand from "@/game/rand/client";
 
 import { WS } from "@/lib";
-import { ProtocalBody } from "@/protocol";
+import { NormalMsg, BoardCast } from "@/protocol";
 
 export default {
   components: { Cheer, Rand },
@@ -121,12 +121,12 @@ export default {
     },
 
     BoardCast() {
-      ProtocalBody.AddVlue(CMD);
-      WS.Send(ProtocalBody.Set({ CMD: 1 }));
+      let msg = BoardCast(this.bmsg);
+      WS.Send(msg);
     },
 
     SendMsg() {
-      WS.Send(ProtocalBody.Set({ CMD: 1, FId: 123 }));
+      WS.Send(NormalMsg());
     }
   }
 };

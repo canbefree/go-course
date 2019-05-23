@@ -4,14 +4,19 @@ const CMD_NORMAL = 0;
 
 
 
+const VERSION = 1.0
 
-let BoardCast = function (cmd) {
-    return ProtocalBody.New().AddCMD(cmd).AddContent(content);
+BoardCast = function (content) {
+    return ProtocalBody.New().AddCMD(CMD_BOARDCAST).AddContent(content);
 }
 
+let NormalMsg = function (from, to, content) {
+    return ProtocalBody.New().AddCMD(CMD_NORMAL).AddContent(content);
+}
 
 export * from './pos'
 export * from './body'
 export {
-    BoardCast
+    BoardCast,
+    NormalMsg
 }

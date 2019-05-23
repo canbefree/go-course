@@ -13,6 +13,7 @@ let Body = function () {
         let body = {
             //前提 CMD POS BODY 不会存在0 null 特殊值
             CMD: this.CMD || null,
+            TO: this.CMD || null,
             POS: this.POS || null,
             Content: this.Content || null,
         }
@@ -44,9 +45,7 @@ let Body = function () {
 }()
 
 
-// s = Body.New().AddCMD(3)
-// console.log(s.CMD)
-let ProtocalBody = BODY
+let ProtocalBody = Body
 
 export { ProtocalBody }
 
