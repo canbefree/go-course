@@ -12,3 +12,8 @@ func TestMinQuantity(t *testing.T) {
 		So(subject, ShouldEqual, 32768)
 	})
 }
+
+func TestSum(t *testing.T) {
+	n := fun(100)
+	t.Error(n)
+}

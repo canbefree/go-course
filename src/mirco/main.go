@@ -1,7 +1,5 @@
-package mirco
-
-const ()
+package main
 
 func main() {
-
+	
 }

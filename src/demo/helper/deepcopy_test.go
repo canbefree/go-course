@@ -15,7 +15,6 @@ import (
 
 //赋值一个整形
 // 整形地址 内容~整形内容
-
 func TestDeepCopy(t *testing.T) {
 	Convey("deep copy", t, func() {
 		Convey("int", func() {

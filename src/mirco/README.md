@@ -13,3 +13,7 @@ protobuf rpc
 protobuf socket
 
 
+consul 下载consul bin目录
+
+
+

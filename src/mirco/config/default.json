@@ -1,0 +1,6 @@
+{
+    "consul": {
+        "server": true,
+        "client": false,
+    }
+}

@@ -10,3 +10,10 @@ func minQuantity(v uint32) uint32 {
 	v++
 	return v
 }
+
+func fun(n int) int {
+	if n == 1 || n == 2 {
+		return 1
+	}
+	return fun(n-1) + fun(n-2)
+}
