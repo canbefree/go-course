@@ -1,17 +1,33 @@
 package db
 
+import (
+	"database/sql"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
 const (
 	TYPE_MYSQL = "mysql"
 )
 
 type DB struct {
-	host string
-	port string
+	db sql.DB
 }
 
-func GetInstance(t string) *DB {
-	return &DB{
-		"102",
-		"1",
-	}
+func (database *DB) Use(dblink sql.DB) {
+	database.db = dblink
 }
+
+/**
+usage:
+	DB.insert();
+	import (
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
+)
+
+	db.insert();
+	db.query()
+	db.one();
+
+*/
