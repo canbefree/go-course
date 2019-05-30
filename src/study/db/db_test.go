@@ -21,14 +21,21 @@ func TestSuite(t *testing.T) {
 
 			So(err, ShouldBeNil)
 
-			So(result.RowsAffected, ShouldEqual, int64(0))
+			affected, _ := result.RowsAffected()
+
+			So(affected, ShouldEqual, 0)
 		})
 
 		Convey("drop table", func() {
 			dropSql := "drop table if exists test"
 			result, err := db.Exec(dropSql)
 			So(err, ShouldBeNil)
-			So(result.RowsAffected, ShouldEqual, int64(0))
+			affected, _ := result.RowsAffected()
+			So(affected, ShouldEqual, 0)
+		})
+
+		Convey("test convey", func(c C) {
+			c.So(4, ShouldBeBetween, 3, 4)
 		})
 	})
 }
