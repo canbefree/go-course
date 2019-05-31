@@ -34,3 +34,5 @@ func newPool(driver string) *Pool {
 // func (pool *Pool) getConnect() Driver {
 // 	return <-pool.dbChan
 // }
+
+func newPool()

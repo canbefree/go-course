@@ -16,3 +16,5 @@ func TestPool(t *testing.T) {
 		db.Query("select * from user")
 	})
 }
+
+
