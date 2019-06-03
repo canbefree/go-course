@@ -1,14 +1,12 @@
-package  factory
+package factory
 
 import (
 	"demo/models/card"
-	"demo/service/cheer"
 )
 
-//根据位置创建游戏
+/* NewGame 新建游戏 */
 func NewGame(pos card.POS) {
-	switch pos{
-		return cheer.NewGame()
-	}
-}
 
+	a := 1
+	b := 12
+}
