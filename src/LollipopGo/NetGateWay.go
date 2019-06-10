@@ -576,7 +576,7 @@ func (this *NetDataConn) GLConnServerFunc(ProtocolData map[string]interface{}) {
 	fmt.Println("Global server conn entry gateway!!!")
 
 	// Globla server 发过来的可以加密的数据
-	StrServerID := ProtocolData["ServerID"].(string)
+Data["ServerID"].(string)
 	strGlobalServer = StrServerID
 	// 1 发送数据
 	data := &Proto2.GW2G_ConnServer{
